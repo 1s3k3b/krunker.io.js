@@ -13,6 +13,9 @@ const { resolveWeapon, resolveRarity } = {
 module.exports = class Skin {
     constructor(client, wResolvable, data) {
         Object.defineProperty(this, 'client', { value: client });
+        URLs = getTexture(data)
+        Texture_Default = URLs.t
+        Texture_Emissive = URLs.e
         this.weapon = resolveWeapon(wResolvable);
         if (!this.weapon) throw new ArgumentError('CANNOT_RESOLVE', wResolvable, 'Weapon');
         this.name = data.name;
@@ -25,6 +28,9 @@ module.exports = class Skin {
         this.keyword = data.keyW || null;
         this.texture = data.tex || null;
         this.limited = data.limT || null;
+        this.textureImage = Texture_Default
+        this.textureEmissive = this.glow ? Texture_Emissive : null;
+        this.preview = getPreview(data)
         this.itemNum = getItemNum(this.name);
         this.estimatedPrice = avgPrices[this.itemNum];
     }
@@ -36,7 +42,38 @@ module.exports = class Skin {
         return this.author;
     }
 };
+const types = ["weapons/weapon_", "hats/hat_", "body/body_", "melee/melee_", "sprays/", "dyes/","waist/waist_","faces/face_"];
 
+function getPreview(t) {
+    return "https://assets.krunker.io/textures/"+(t.type&&4==t.type?"sprays/"+t.id:"previews/"+(t.type&&(3>t.type||4<t.type)?"cosmetics/"+t.type+"_"+t.id+(t.tex?"_"+t.tex:""):types[t.type||0]+(t.type&&3==t.type?t.id+(null==t.pat?null==t.tex?"":"_"+t.tex:"_c"+t.pat):(t.weapon||0)+"_"+(null==t.mid?null==t.pat?t.tex?t.tex:t.id:"c"+t.pat:"m"+t.mid+(null==t.midT?"":"_"+t.midT)))))+".png?build=u9K3c";
+    
+}
+function getTexture(i){
+    let texture = 'https://assets.krunker.io/textures/'
+    let emissive 
+    if (i.weapon){
+        if (i.pat) texture+=`weapons/pat/${i.pat}`;
+        if(i.id)texture+=`weapons/skins/weapon_${i.weapon}_${i.id}`;
+        if (!i.id && i.midT && i.mid >= 0)texture+=`${types[0]}${i.weapon}_${i.midT}`;
+        if(!i.id && !i.midT && i.mid >= 0)texture+=`${types[0]}${i.weapon}_${i.mid}`;
+    }
+    else  if (1<= i.type <= 7 && i.type != 5){
+        if(i.pat)texture+=`weapons/pat/${i.pat}`
+        if(i.id && i.tex) texture+=`${types[i.type]}${i.id}_${i.tex}`;
+        else if(i.id && !i.tex) texture += `${types[i.type]}${i.id}`
+        
+    }
+    emissive = texture + '_e.png'
+    texture += '.png'
+    if(i.type == 5){
+        texture = `Shirt Color: ${toHexRGB(i.shirtCol)}\nSleeve Color: ${toHexRGB(i.sleeveCol)}\nPants Color: ${toHexRGB(i.pantsCol)}\nShoes Color: ${toHexRGB(i.shoeCol)}`
+    }
+    if(texture == 'https://assets.krunker.io/textures/.png' || texture.indexOf('undefined') > 0){
+        console.log("ERROR SKIN TEXTURE NOT GENERATED",i)
+        return "undefined"
+    }
+    return {e : emissive,t:texture}
+}
 class Weapon {
     constructor(name = 'Assault Rifle') {
         const pistol = {
