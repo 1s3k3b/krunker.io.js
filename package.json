@@ -1,7 +1,7 @@
 {
     "name": "krunker.io.js",
     "author": "1s3k3b",
-    "version": "1.8.3",
+    "version": "1.8.4",
     "description": "Easy-to-use API wrapper for Krunker.io",
     "main": "./src/index.js",
     "types": "./typings/typings.d.ts",
