@@ -1,5 +1,5 @@
 declare module 'krunker.io.js' {
-    type skinMaker = {
+    interface SkinMaker {
         username: string;
         skins: string[];
     };
@@ -61,6 +61,9 @@ declare module 'krunker.io.js' {
         glow?: boolean;
         itemNum: number;
         averagePrice: number;
+        textureImage: string;
+        textureEmissive: string | null;
+        preview: string;
     }
     export interface Player {
         username: string;
@@ -253,7 +256,7 @@ declare module 'krunker.io.js' {
             map?: (() => any) | string;
             count?: number;
         }): Skin[];
-        getSkinsByCreator(creator: string): skinMaker;
+        getSkinsByCreator(creator: string): SkinMaker;
         public fetchMods(options: {
             player?: string | Player | Clan;
             filter?: () => boolean;
@@ -365,6 +368,6 @@ declare module 'krunker.io.js' {
         }): string;
     };
     export const Skinmakers: {
-        getSkinsByCreator(creator: string): skinMaker;
+        getSkinsByCreator(creator: string): SkinMaker;
     };
 }
