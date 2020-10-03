@@ -4,6 +4,7 @@ const Messages = {
     'INVALID_ARGUMENT': arg => 'Invalid ' + arg + ' given.',
     'SOMETHING_WENT_WRONG': () => 'Something went wrong.',
     'CANNOT_RESOLVE': (arg, struct) => 'Cannot resolve ' + arg + ' to a ' + struct + '.',
+    'NO_SKIN_DATA': () => 'No skin data.',
 };
 
 const makeError = BaseError => class KrunkerError extends BaseError {
@@ -14,5 +15,6 @@ const makeError = BaseError => class KrunkerError extends BaseError {
 
 module.exports = {
     KrunkerAPIError: makeError(Error),
+    KrunkerError: makeError(Error),
     ArgumentError: makeError(TypeError),
 };
